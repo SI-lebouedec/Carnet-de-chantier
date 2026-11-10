@@ -1,0 +1,47 @@
+/* Couleur d'appui : l'opposée de la couleur de thème (couleurs complémentaires). Trois variantes au choix, via html[data-ct]. */
+[data-theme=s0]{--ct:#D1AD0D;--ct-ink:#504101;--ct-wash:#F6EFCF;--ct-veil:#D1AD0D59;--ct-marker:color-mix(in srgb,#D1AD0D 38%,#fff)}
+[data-theme=s1]{--ct:#99ADFE;--ct-ink:#343F73;--ct-wash:#EBEFFF;--ct-veil:#99ADFE59;--ct-marker:color-mix(in srgb,#99ADFE 38%,#fff)}
+[data-theme=s2]{--ct:#4EB9FE;--ct-ink:#04466B;--ct-wash:#DCF1FF;--ct-veil:#4EB9FE59;--ct-marker:color-mix(in srgb,#4EB9FE 38%,#fff)}
+[data-theme=s3]{--ct:#FF981B;--ct-ink:#643700;--ct-wash:#FFEAD1;--ct-veil:#FF981B59;--ct-marker:color-mix(in srgb,#FF981B 38%,#fff)}
+[data-theme=s4]{--ct:#FF9739;--ct-ink:#663603;--ct-wash:#FFEAD7;--ct-veil:#FF973959;--ct-marker:color-mix(in srgb,#FF9739 38%,#fff)}
+[data-theme=s5]{--ct:#93BF31;--ct-ink:#354906;--ct-wash:#E9F2D6;--ct-veil:#93BF3159;--ct-marker:color-mix(in srgb,#93BF31 38%,#fff)}
+[data-theme=s6]{--ct:#C2A1FC;--ct-ink:#4C386D;--ct-wash:#F3ECFE;--ct-veil:#C2A1FC59;--ct-marker:color-mix(in srgb,#C2A1FC 38%,#fff)}
+[data-theme=s7]{--ct:#02C79D;--ct-ink:#004C3A;--ct-wash:#CCF4EB;--ct-veil:#02C79D59;--ct-marker:color-mix(in srgb,#02C79D 38%,#fff)}
+[data-theme=s8]{--ct:#FF9739;--ct-ink:#663603;--ct-wash:#FFEAD7;--ct-veil:#FF973959;--ct-marker:color-mix(in srgb,#FF9739 38%,#fff)}
+[data-theme=s9]{--ct:#12C4CE;--ct-ink:#014A4E;--ct-wash:#D0F3F5;--ct-veil:#12C4CE59;--ct-marker:color-mix(in srgb,#12C4CE 38%,#fff)}
+[data-theme=thermique]{--ct:#4EB9FE;--ct-ink:#04466B;--ct-wash:#DCF1FF;--ct-veil:#4EB9FE59;--ct-marker:color-mix(in srgb,#4EB9FE 38%,#fff)}
+[data-theme=acoustique]{--ct:#FF9739;--ct-ink:#663603;--ct-wash:#FFEAD7;--ct-veil:#FF973959;--ct-marker:color-mix(in srgb,#FF9739 38%,#fff)}
+[data-theme=mecanique]{--ct:#FF981B;--ct-ink:#643700;--ct-wash:#FFEAD1;--ct-veil:#FF981B59;--ct-marker:color-mix(in srgb,#FF981B 38%,#fff)}
+[data-theme=lumiere]{--ct:#99ADFE;--ct-ink:#343F73;--ct-wash:#EBEFFF;--ct-veil:#99ADFE59;--ct-marker:color-mix(in srgb,#99ADFE 38%,#fff)}
+[data-theme=energie]{--ct:#12C4CE;--ct-ink:#014A4E;--ct-wash:#D0F3F5;--ct-veil:#12C4CE59;--ct-marker:color-mix(in srgb,#12C4CE 38%,#fff)}
+
+/* A · Touche : de petits détails seulement */
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .main a:not(.btn):not(.tile):not(.head):not(.card-s):hover,html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .main a:not(.btn):not(.tile):not(.head):not(.card-s):focus-visible{color:var(--ct-ink);text-decoration-color:var(--ct);text-decoration-thickness:2px}
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) :focus-visible{outline:3px solid var(--ct);outline-offset:2px}
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .bar,html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .thin i b{background:linear-gradient(90deg,var(--theme),var(--ct))}
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .main li::marker{color:var(--ct-ink)}
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .sgbtn span{color:var(--ct-ink)}
+html:is([data-ct=touche],[data-ct=duo],[data-ct=bichro]) .debunk .tag{color:var(--ct-ink)}
+/* B · Duo : la couleur d'appui s'installe dans les titres, les boutons et le bandeau */
+html:is([data-ct=duo],[data-ct=bichro]) body.lt-montante .lettrine::first-letter{color:var(--ct-ink)}
+html:is([data-ct=duo],[data-ct=bichro]) h2 .nb{background:var(--ct-ink);color:#fff}
+html:is([data-ct=duo],[data-ct=bichro]) .fmbox .tab{background:var(--ct-ink);color:#fff;border-color:var(--ct)}
+html:is([data-ct=duo],[data-ct=bichro]) .sec.fold .fold-tog{background:var(--panel);color:var(--ct-ink);border-color:var(--ct-ink);box-shadow:2px 2px 0 var(--ct)}
+html:is([data-ct=duo],[data-ct=bichro]) .sec.fold>.fold-bar{border-color:var(--ct);background:color-mix(in srgb,var(--ct) 4%,var(--panel))}
+html:is([data-ct=duo],[data-ct=bichro]) .hero .ph::before{background:radial-gradient(70% 90% at 100% 100%,var(--ct-veil),transparent 70%),var(--theme-veil)}
+html:is([data-ct=duo],[data-ct=bichro]) .eyebrow{border-color:var(--ct-ink);box-shadow:3px 3px 0 var(--ct)}
+html:is([data-ct=duo],[data-ct=bichro]) .sgbtn{border-color:var(--ct-ink);box-shadow:3px 3px 0 var(--ct)}
+/* C · Bichromie : deux couleurs d'impression, partout */
+html[data-ct=bichro] .main .sec>h2{background:linear-gradient(var(--theme),var(--theme)) 0 100%/96px 5px no-repeat;padding-bottom:10px}
+html[data-ct=bichro] body.bl-lavis .main .blk:nth-of-type(even):not(.piege):not(.exemple){background:linear-gradient(135deg,var(--ct-wash),var(--panel));border-color:color-mix(in srgb,var(--ct) 65%,transparent)}
+html[data-ct=bichro] body.bl-lavis .main .blk:nth-of-type(even):not(.piege):not(.exemple)>.lb{color:var(--ct-ink)}
+html[data-ct=bichro] .main .ans:focus,html[data-ct=bichro] .main input:focus,html[data-ct=bichro] .main select:focus{border-color:var(--ct-ink)}
+html[data-ct=bichro] .tab,html[data-ct=bichro] .fmbox .tab{box-shadow:3px 3px 0 var(--ct)}
+html[data-ct=bichro] .main th{border-bottom-color:var(--ct)}
+
+/* Bandeaux harmonisés (palette Sorbet) : voile de la couleur de séquence en teinte légère (et non en multiplication, qui noircissait les photos sombres), appui complémentaire dans l'angle, et fond clair derrière le titre pour que le texte reste lisible quelle que soit la photo. */
+html[data-ct=bichro] .hero .ph{filter:saturate(.9)}
+html[data-ct=bichro] .hero .ph::before{mix-blend-mode:normal;background:
+ linear-gradient(90deg,color-mix(in srgb,var(--paper) 86%,transparent) 0%,color-mix(in srgb,var(--paper) 62%,transparent) 36%,color-mix(in srgb,var(--paper) 0%,transparent) 74%),
+ radial-gradient(60% 90% at 100% 100%,color-mix(in srgb,var(--ct) 38%,transparent),transparent 70%),
+ color-mix(in srgb,var(--theme) 34%,transparent)}

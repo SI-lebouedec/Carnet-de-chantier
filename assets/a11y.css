@@ -1,0 +1,40 @@
+/* Accessibilité et confort visuel : contrastes des petits badges, lien d'évitement, mouvement réduit, apparitions douces. */
+
+/* Couleur du texte posé sur la couleur de séquence : foncé, ou blanc quand le blanc contraste mieux (≥ 4,5:1). */
+:root{--on-theme:#1b1208}
+.btn.pri,body.bt-pastille .btn.pri,a.btn.pri,.pages a.on,.atabs button.on,.chip.on{color:var(--on-theme)}
+.seqchip,.bc .bs a{color:var(--on,#1b1208)}
+
+/* Autres petits textes un peu trop pâles */
+.wk-d small{color:#1F6B3F}
+.metier-facts dt{color:color-mix(in srgb,var(--c) 60%,#000)}
+.sub-chip{background:rgba(20,12,4,.42);color:#fff}
+
+/* Phases ESQ → AOR : toutes dans la couleur de la séquence */
+.card-s.rich .codes{font:700 .7rem/1 Arial,sans-serif}
+.card-s.rich .codes span.on{background:var(--dot);color:var(--on,#1b1208)}
+.card-s.rich .steps i.on{background:var(--dot)}
+.phleg{margin:0 0 14px;font-size:.88rem;line-height:1.55;color:var(--ink2);max-width:62em}
+.phleg b{color:var(--ink);font-family:Arial,sans-serif;font-size:.82rem;letter-spacing:.02em}
+
+/* Lien d'évitement */
+.skiplink{position:absolute;left:12px;top:-80px;z-index:300;background:var(--ink);color:#fff;padding:12px 18px;border-radius:8px;font:600 1rem Arial,sans-serif;text-decoration:none;border:2px solid #fff;transition:top .15s}
+.skiplink:focus{top:10px}
+
+/* Cibles tactiles */
+.layout .side button[aria-label],.pages .tg,.pages button{min-width:40px}
+#sideTog,.sidetog{min-width:40px;min-height:40px}
+
+/* Mouvement réduit : l'appareil de l'élève le demande, ou le mode confort « calme » */
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.001ms!important;transition-delay:0s!important}
+}
+body.cf-calme *,body.cf-calme *::before,body.cf-calme *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.001ms!important;transition-delay:0s!important}
+html:has(body.cf-calme){scroll-behavior:auto}
+
+/* Apparitions douces au défilement : le site en avait déjà (mode « mo-full »), on les adoucit : moins de décalage, plus court */
+body.mo-full .sec.rv>*,body.mo-full .pn{transform:translateY(18px) scale(1);transition:opacity .6s ease,transform .6s ease}
+body.mo-full .sec.rv.vu>*,body.mo-full .pn.vu{transform:none}
+body.cf-calme .sec.rv>*,body.cf-calme .pn{opacity:1!important;transform:none!important}
+.eqt[aria-pressed=true],.vtools button.on{color:var(--on-theme)}

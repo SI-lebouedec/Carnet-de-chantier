@@ -1,0 +1,16 @@
+/* Mode lecture confort : un interrupteur « Aa » en bas à droite. */
+.cfbtn{position:fixed;right:16px;bottom:68px;z-index:70;width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:var(--panel);color:var(--ink);font:700 1rem/1 Arial,sans-serif;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 6px rgba(43,45,49,.22)}
+.cfbtn:hover,.cfbtn:focus-visible{transform:translateY(-2px)}
+.cfbtn.on{background:var(--ink);color:#fff}
+.cftoast{position:fixed;right:16px;bottom:120px;z-index:80;max-width:min(300px,calc(100vw - 32px));background:var(--ink);color:#fff;border-radius:10px;padding:10px 14px;font:600 .9rem/1.35 Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.cftoast[hidden]{display:none}
+@media(max-width:640px){.cfbtn{right:12px;bottom:62px}.cftoast{right:12px;bottom:114px}}
+
+/* Réglages appliqués par le mode confort (classes sur <body>) */
+body.cf-ar{--f-body:Arial,Carlito,sans-serif;--f-title:Arial,Carlito,sans-serif;--f-label:Arial,sans-serif}
+body.cf-ar h1,body.cf-ar h2,body.cf-ar h3{letter-spacing:0;font-weight:700}
+body.cf-sobre .bgfx{display:none}
+body.cf-sobre .hero .ph{background-image:none!important}
+body.cf-sobre .hero .ph::before,body.cf-sobre .hero .ph::after{display:none}
+body.cf-sobre .blk,body.cf-sobre .fmbox,body.cf-sobre .card-s{background:var(--panel)!important;box-shadow:none!important}
+body.cf-sobre .main .blk>.lb{color:var(--ink)}

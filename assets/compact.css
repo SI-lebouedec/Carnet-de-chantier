@@ -1,0 +1,106 @@
+/* Pages plus compactes : moins de défilement, figures à leur taille naturelle, texte autour des figures, pastilles plus petites. */
+
+/* Rythme vertical plus serré (on garde un interligne confortable : 1,6) */
+body{line-height:1.6}
+.main p{margin-top:0;margin-bottom:.7em}
+h2{font-size:clamp(1.75rem,3.2vw,2.25rem);margin:22px 0 10px}
+h2 .nb{width:1.8rem;height:1.8rem;font-size:1rem}
+h3.tcap{margin:16px 0 6px;font-size:1rem}
+.lettrine{margin-top:.6em}
+body.lt-montante .lettrine::first-letter{font-size:2.7em}
+.blk{margin:16px 0 14px;padding:16px 20px 14px}
+.fmbox{padding:28px 16px 14px;margin:22px 0 14px}
+.fmbox .tab{font-size:.78rem;padding:2px 10px}
+figure.fig{margin:12px 0;padding:10px}
+figure.fig svg{max-height:min(58vh,480px)}
+.calc{margin:14px 0;padding:10px 14px 12px}
+.calc .ctl{gap:8px 18px;margin:8px 0}
+.calc .ctl label{gap:2px}
+.calc .out{padding:6px 12px}
+.calc .note,.note{margin:6px 0 0}
+.dcg-fig svg{max-height:min(54vh,430px)}
+.steps{gap:7px}
+
+/* Pastilles : plus petites */
+.bub{padding:2px 8px;font-size:.78rem;border-width:2px;border-radius:12px}
+.chip{padding:3px 11px;font-size:.86rem;min-height:36px}
+.sec.fold .fold-tog{padding:6px 14px;font-size:.92rem}
+.sec.fold>.fold-bar{padding:8px 12px;margin-top:4px}
+.card-s.rich .codes{font-size:.66rem}
+.eyebrow{font-size:.85rem;padding:5px 12px}
+
+/* Figures posées à côté du texte (placées par compact.js) */
+.fl{display:flow-root}
+figure.fig.figf{float:right;width:var(--fw,460px);max-width:48%;margin:4px 0 10px 22px}
+figure.fig.figf svg{width:100%;height:auto;max-height:none}
+@media(max-width:820px){figure.fig.figf{float:none;max-width:100%;width:auto;margin:12px auto}}
+
+/* Calculateurs : la figure à gauche, les curseurs à droite quand il y a la place */
+.calc{container:calc/inline-size}
+@container calc (min-width:840px){
+ .calc .dcg:not(:has(>:nth-child(3))){grid-template-columns:minmax(0,var(--dw,600px)) minmax(240px,1fr)!important;gap:8px 22px!important;align-items:start}
+ .calc .dcg:not(:has(>:nth-child(3))) .dcg-fig svg{max-width:100%!important;margin:0!important}
+ .calc .dcg:not(:has(>:nth-child(3))) .ctl{grid-template-columns:1fr!important}
+}
+
+/* Tableaux et champs de réponse plus serrés */
+th,td{padding:6px 10px}
+input.ans{padding:3px 8px;line-height:1.3}
+.calc select,.calc input[type=text]{min-height:38px}
+.blk.exemple{padding:14px 18px 12px}
+
+/* Glossaire : recherche */
+.entry[hidden],section[id^="g-"][hidden]{display:none!important}
+.alpha a.off{opacity:.35;pointer-events:none}
+.nores{display:none}
+
+/* « Chauffe 1 kg de glace » : courbe à gauche, curseur et valeur à droite */
+@media(min-width:1100px){
+ #slcalc{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:4px 24px;align-items:start}
+ #slcalc>.hd,#slcalc>.note{grid-column:1/-1}
+ #slcalc>.slsvg{grid-column:1;grid-row:2/4;margin-top:0}
+ #slcalc>.ctl{grid-column:2;grid-row:2}
+ #slcalc>.out{grid-column:2;grid-row:3;align-self:start}
+ #slcalc .out .big{font-size:2rem}
+}
+
+/* Glossaire : schémas à leur taille, à côté du texte */
+.entry{display:flow-root}
+.entry>figure.gfig{float:right;width:var(--fw,420px);max-width:46%;margin:2px 0 10px 22px}
+.entry>figure.gfig svg{max-width:100%;margin:0}
+.entry>figure.gfig figcaption{font-size:.84rem;line-height:1.35}
+.entry h3{font-size:1.9rem;margin:0 0 4px}
+.entry p{margin:0 0 .6em}
+@media(max-width:820px){.entry>figure.gfig{float:none;width:auto;max-width:100%;margin:10px auto}}
+.entry .fmbox,.entry .blk,.entry .fact,.entry table{display:flow-root}
+
+/* Jetons manquants utilisés par 12 schémas du glossaire (ils s'affichaient en noir) */
+:root{--sky-2:#DCE8F2;--leaf-2:#DDEBD3;--paper-2:#F1E8D6}
+
+/* Arrivée par un lien du glossaire : l'entrée se place sous la barre de recherche et se signale */
+.entry{scroll-margin-top:104px}
+.entry:target{outline:3px solid var(--theme);outline-offset:8px;border-radius:2px}
+@media(max-width:820px){.entry{scroll-margin-top:70px}}
+
+/* formules du glossaire : chaque formule est un bloc insécable ; on ne coupe jamais au milieu d'une formule */
+.entry .eq2{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 2.4rem;font-size:clamp(1.2rem,3.6vw,1.6rem);overflow-x:auto;max-width:100%}
+.entry .eq2.col{flex-direction:column;align-items:flex-start;gap:1rem}
+.entry .eq2 .fq{display:block;white-space:nowrap}
+.entry .eq2 .lab{display:block;font-family:'Lato',system-ui,sans-serif;font-style:normal;font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted,#5B5F66);white-space:normal;margin-bottom:.15rem}
+.entry .eq2 .shp{display:inline-block;width:14.5rem;font-family:'Lato',system-ui,sans-serif;font-style:normal;font-size:.8rem;color:var(--muted,#5B5F66);white-space:normal;vertical-align:middle}
+.entry .eq2 .txt{font-family:'Lato',system-ui,sans-serif;font-style:normal;font-size:.9rem;white-space:normal}
+.entry .eq2 .gap{display:inline-block;width:1.6rem}
+@media(max-width:560px){.entry .eq2 .shp{display:block;width:auto}}
+/* glossaire : schémas larges (≥ 600) en pleine largeur sous le texte, pour rester lisibles */
+.entry>figure.gfig.gwide{float:none;clear:both;width:auto;max-width:min(100%,720px);margin:14px 0}
+/* séquence 1 : énergie grise et carbone de l'isolant choisi */
+.env{margin:10px 0 0;display:grid;gap:8px}
+.envrow{display:grid;grid-template-columns:minmax(130px,190px) 1fr minmax(150px,auto);gap:10px;align-items:center;font-size:.95rem}
+.envl{font-weight:600}.envn{font-weight:400;color:var(--ink2)}
+.envt{position:relative;height:16px;background:var(--panel);border:1.5px solid var(--line)}
+.envt .zero{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55}
+.envrow:first-child .envt .zero{display:none}
+.envb{position:absolute;top:0;bottom:0;display:block}
+.envb.pos{background:#C4602F}.envb.neg{background:#2E8B57}
+.env .note{margin:2px 0 0}
+@media(max-width:620px){.envrow{grid-template-columns:1fr;gap:3px}}
