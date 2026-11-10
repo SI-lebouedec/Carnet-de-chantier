@@ -1,6 +1,6 @@
 /* Suivi d'utilisation : page consultée, temps actif, défilement, rubriques lues.
    Envoi au script Google (feuille « Suivi consultation AC »), une ligne par visite mise à jour régulièrement.
-   Chargé par build_online.py sur toutes les pages de la version en ligne. Rien n'est envoyé pour un invité. */
+   Chargé par build_online.py sur toutes les pages de la version en ligne. Les invités et le compte professeur (classe STI2D) sont suivis comme les autres. */
 (function(){
  var EP="https://script.google.com/macros/s/AKfycbzY6gTw2aiUs01rsS2HYU5SbZfnQCf_W4I2I-n_oxjijwnrjaTSMGQ3_wzhysfZWl8/exec",KEY='ac-carnet-session';
  if(!EP)return;
@@ -12,7 +12,6 @@
  function norm(x){return String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[\s\-_.]+/g,'').toLowerCase()}
  var s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
  if(!s||!s.code||!s.prenom||!s.nom||!s.motDePasse)return;
- if(norm(s.code)==='invites'||norm(s.code)==='sti2d'||norm(s.prenom)==='invite')return;
  var vid=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
  var dev=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||innerWidth<700?'mobile':'ordinateur';
  var active=0,lastSent=-1,lastInput=Date.now(),maxScroll=0,secs={};

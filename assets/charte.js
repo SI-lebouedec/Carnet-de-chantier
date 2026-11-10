@@ -434,9 +434,11 @@ const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targ
 document.querySelectorAll('.debunk').forEach(e=>io2.observe(e));
 
 /* ---------- tiroir séquences ---------- */
-function closeNav(){$('navL').classList.remove('open');$('scrim').classList.remove('on')}
-$('burger').onclick=()=>{$('navL').classList.add('open');$('scrim').classList.add('on')};
+function closeNav(){$('navL').classList.remove('open');$('scrim').classList.remove('on');document.documentElement.classList.remove('nl-lock')}
+$('burger').onclick=()=>{$('navL').classList.add('open');$('scrim').classList.add('on');document.documentElement.classList.add('nl-lock')};
 $('scrim').onclick=closeNav;
+$('scrim').addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+addEventListener('resize',()=>{if(innerWidth>1180)closeNav()});
 
 
 /* démarche étape par étape : le deuxième exemple d'une fiche (et les exercices) ne s'affichent pas d'emblée.
@@ -567,4 +569,45 @@ if(location.hash){/* aller à l'ancre, puis recaler après la mise en page (figu
   q.addEventListener('input',run);run();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
+
+
+/* ---------- schémas : bouton « Agrandir » quand l'échelle est trop petite pour lire ---------- */
+(function(){
+ var SEL='figure.fig svg,.dcg-fig svg,.wall svg,.gn-netw svg,.pfx-sc svg,#pfx-svg';
+ function vbw(s){var v=(s.getAttribute('viewBox')||'').split(/[\s,]+/).map(Number);return v.length===4&&v[2]>0?v:null}
+ function host(s){return s.closest('figure.fig,.dcg-fig,.sv,.pfx-sc,.gn-netw')||s.parentNode}
+ function openZoom(s){
+  var vb=vbw(s),ov=document.createElement('div');ov.className='zoomov';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Schéma agrandi');
+  var portrait=innerHeight>innerWidth,wide=vb&&vb[2]/vb[3]>1.15;
+  if(portrait&&wide)ov.classList.add('rot');
+  var bar=document.createElement('div');bar.className='zbar';
+  var rb=document.createElement('button');rb.type='button';rb.textContent='↻ Pivoter';rb.onclick=function(){ov.classList.toggle('rot')};
+  var cb=document.createElement('button');cb.type='button';cb.textContent='✕ Fermer';
+  bar.appendChild(rb);bar.appendChild(cb);
+  var box=document.createElement('div');box.className='zbox';
+  var c=s.cloneNode(true);c.removeAttribute('style');c.removeAttribute('width');c.removeAttribute('height');box.appendChild(c);
+  var hint=document.createElement('div');hint.className='zhint';hint.textContent=portrait&&wide?'Schéma tourné pour être lu en grand : « Pivoter » pour revenir.':'';
+  ov.appendChild(bar);ov.appendChild(box);ov.appendChild(hint);
+  function close(){ov.remove();document.removeEventListener('keydown',key);if(opener)opener.focus()}
+  function key(e){if(e.key==='Escape')close()}
+  var opener=document.activeElement;
+  cb.onclick=close;ov.addEventListener('click',function(e){if(e.target===ov)close()});document.addEventListener('keydown',key);
+  document.body.appendChild(ov);cb.focus();
+ }
+ function scan(){
+  var small=innerWidth<=760;
+  document.querySelectorAll(SEL).forEach(function(s){
+   var vb=vbw(s);if(!vb)return;var h=host(s);
+   if(s.closest('.zoomov'))return;
+   var b=s.nextElementSibling&&s.nextElementSibling.classList.contains('zbtn')?s.nextElementSibling:null;
+   var scale=s.getBoundingClientRect().width/vb[2];
+   var need=small&&scale>0&&scale<.82;
+   if(need&&!b){b=document.createElement('button');b.type='button';b.className='zbtn';b.textContent='⤢ Agrandir';b.setAttribute('aria-label','Agrandir ce schéma');b.addEventListener('click',function(){openZoom(s)});s.parentNode.insertBefore(b,s.nextSibling)}
+   else if(!need&&b)b.remove();
+  });
+ }
+ var t;function later(){clearTimeout(t);t=setTimeout(scan,150)}
+ addEventListener('load',function(){scan();setTimeout(scan,1200)});addEventListener('resize',later);addEventListener('orientationchange',later);
+ document.addEventListener('DOMContentLoaded',function(){setTimeout(scan,300)});
 })();

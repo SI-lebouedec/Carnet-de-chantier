@@ -1276,3 +1276,35 @@ html:not([data-photo=home]) .lede{font-size:clamp(1.2rem,2.2vw,1.6rem);max-width
 /* Sous-entrées du sommaire (familles de métiers) : léger retrait */
 .rail li.sub a{padding-left:22px;font-size:.84rem}
 .rail li.sub a::before{width:8px;height:8px;margin-top:-4px;left:-24px}
+
+
+/* ============ MOBILE : tiroir des séquences et schémas ============ */
+/* Le tiroir occupe toute la hauteur de l'écran (align-self:start le laissait à la hauteur de son contenu, donc
+   coupé et non défilant) ; seul son contenu défile, la page derrière reste immobile. */
+@media(max-width:1180px){.navL{align-self:stretch;height:100vh;height:100dvh;overscroll-behavior:contain}}
+body.nl-drawer .navL{align-self:stretch;height:100vh;height:100dvh;overscroll-behavior:contain}
+.navL>.tree:not(.resul){overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.scrim{touch-action:none}
+html.nl-lock,html.nl-lock body{overflow:hidden;overscroll-behavior:none}
+
+/* Schémas sur téléphone : ils tiennent dans la largeur de l'écran, sans décalage latéral.
+   Quand l'échelle devient trop petite pour lire, un bouton « Agrandir » ouvre le schéma en grand (voir charte.js). */
+@media(max-width:760px){
+ figure.fig,.dcg-fig,.wall .sv,.pfx-sc,.gn-netw{position:relative;overflow-x:visible!important}
+ figure.fig svg,.dcg-fig svg,.wall svg,.gn-netw svg,.pfx-sc svg,.sv svg,#pfx-svg{min-width:0!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:none!important}
+}
+html,body{overflow-x:clip}
+.zbtn{display:flex;width:max-content;margin:6px 0 2px auto;align-items:center;gap:6px;min-height:34px;padding:4px 12px;border:2px solid var(--ink,#2B2D31);border-radius:999px;background:color-mix(in srgb,var(--paper,#fff) 94%,transparent);color:var(--ink,#2B2D31);font:600 .82rem/1 var(--f-label,Arial,sans-serif);letter-spacing:.04em;cursor:pointer}
+.zbtn:focus-visible{outline:3px solid var(--theme,#E8A400);outline-offset:2px}
+.zoomov{position:fixed;inset:0;z-index:9999;background:rgba(24,20,14,.98);overscroll-behavior:contain;touch-action:none}
+.zoomov .zbox{position:absolute;left:50%;top:calc(50% - 4px);transform:translate(-50%,-50%);width:calc(100vw - 20px);height:calc(100dvh - 150px);background:#FFFDF8;border-radius:10px;padding:8px;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.zoomov.rot .zbox{width:calc(100dvh - 150px);height:calc(100vw - 20px);transform:translate(-50%,-50%) rotate(90deg)}
+.zoomov .zbox svg{width:100%!important;height:100%!important;min-width:0!important;max-width:none!important;max-height:none!important}
+.zoomov .zbar{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:10px;z-index:2}
+.zoomov .zbar button{min-height:44px;padding:6px 16px;border:2px solid #fff;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font:600 .95rem/1 Arial,sans-serif;cursor:pointer}
+.zoomov .zhint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:#ddd;font:.85rem Arial,sans-serif;z-index:2}
+@media print{.zbtn,.zoomov{display:none!important}}
+@media(max-width:760px){.tw .pic,td .pic{min-width:96px}}
+
+/* Site dessiné en clair : on empêche le mode sombre automatique du navigateur de le déformer */
+:root{color-scheme:only light}

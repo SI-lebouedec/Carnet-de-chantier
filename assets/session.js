@@ -70,12 +70,7 @@
    var v=b.querySelector('#acName').value;
    if(v===''){msg(b,'Choisis ton nom dans la liste.','err');return}
    var e=eleves[+v];st.prenom=e.prenom;st.nom=e.nom;
-   b.querySelector('#acGo').disabled=true;msg(b,'Vérification…');
-   call('checkAccount',{code:st.code,prenom:st.prenom,nom:st.nom}).then(function(r){
-    b.querySelector('#acGo').disabled=false;
-    if(!r.ok||!r.hasPassword){msg(b,'Aucun code n\'est enregistré pour ton nom. Demande ton code à ton professeur.','err');return}
-    stepPass(b);
-   }).catch(function(){b.querySelector('#acGo').disabled=false;msg(b,'Impossible de joindre le serveur.','err')});
+   stepPass(b); /* plus d'appel « checkAccount » : la vérification du code dit déjà s'il n'y a pas de code enregistré (gain d'environ 2 s) */
   });
  }
  function askedKey(s){return 'ac-code-propose-'+s.code+'|'+s.prenom+'|'+s.nom}
@@ -94,7 +89,7 @@
    call('verify',{code:st.code,prenom:st.prenom,nom:st.nom,password:pw}).then(function(r){
     b.querySelector('#acGo').disabled=false;
     if(r.ok){saveKey(r.key);finish(pw,r.changed===false);return}
-    msg(b,r.error==='wrong password'?'Code incorrect. Vérifie-le ou demande-le à ton professeur.':r.error==='locked'?'Trop d\'essais incorrects. Attends 15 minutes avant de réessayer.':'Connexion impossible. Préviens ton professeur.','err');
+    msg(b,r.error==='wrong password'?'Code incorrect. Vérifie-le ou demande-le à ton professeur.':r.error==='no password configured for this student'?'Aucun code n\'est enregistré pour ton nom. Demande ton code à ton professeur.':r.error==='locked'?'Trop d\'essais incorrects. Attends 15 minutes avant de réessayer.':'Connexion impossible. Préviens ton professeur.','err');
    }).catch(function(){b.querySelector('#acGo').disabled=false;msg(b,'Impossible de joindre le serveur.','err')});
   }
   b.querySelector('#acGo').addEventListener('click',go);
