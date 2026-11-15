@@ -428,7 +428,7 @@ addEventListener('scroll',track,{passive:true});addEventListener('resize',track)
 
 /* ---------- apparition ---------- */
 document.querySelectorAll('.sec.rv').forEach(s=>[...s.children].forEach((c,i)=>c.style.transitionDelay=Math.min(i*70,280)+'ms'));
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vu')}),{threshold:.04,rootMargin:'0px 0px -12% 0px'});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vu')}),{threshold:0,rootMargin:'0px 0px -12% 0px'});
 document.querySelectorAll('.sec.rv,.pn').forEach(e=>io.observe(e));
 const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('reveal-on')}),{threshold:.5});
 document.querySelectorAll('.debunk').forEach(e=>io2.observe(e));

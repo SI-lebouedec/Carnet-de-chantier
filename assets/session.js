@@ -1,4 +1,4 @@
-/* Connexion élève : code de la classe, nom (liste), code personnel. Le code personnel est d'abord celui que
+/* Connexion élève (v8, 15/11/2026) : code de la classe, nom de famille saisi, code personnel ; le navigateur garde un jeton, jamais le code. Le code personnel est d'abord celui que
    donne le professeur (colonne « Mot de passe » de l'onglet Élèves) ; l'élève peut ensuite le modifier
    (action changePassword du script Google). Pas de connexion sans code. Classe « Invités » : codes fixes,
    non modifiables. La session est mémorisée dans le navigateur (clé ac-carnet-session). */
@@ -12,7 +12,7 @@
  var KK='ac-carnet-key'; /* clé de déchiffrement des pages, remise par le script après une connexion valide */
  function call(action,params){
   /* Les codes ne passent pas dans l'adresse : connexion et changement de code se font en POST. */
-  if(action==='verify'||action==='changePassword'){
+  if(true){
    var o={action:action};Object.keys(params).forEach(function(k){o[k]=params[k]});
    return fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json()});
   }
@@ -47,70 +47,55 @@
  function field(id,label,type,extra){return '<label class="acl" for="'+id+'">'+label+'</label><input class="acin" id="'+id+'" type="'+(type||'text')+'" '+(extra||'')+'>'}
 
  function stepCode(b,note){
-  b.innerHTML=(note?'<p class="acnote">'+note+'</p>':'')+'<p>Connecte-toi avec le code que ton professeur t\'a donné.'+(locked?' Le site est réservé aux élèves de la classe.':' Tu peux continuer à lire le cours sans te connecter.')+'</p>'+field('acCode','Code de ta classe','text','autocomplete="off" placeholder="par exemple : T STI2D 2 b"')+'<div class="acrow"><button class="btn pri" type="button" id="acGo">Continuer</button></div>';
-  var inp=b.querySelector('#acCode');inp.focus();
+  /* Version 8 : un seul formulaire (classe, nom, code). Le script ne renvoie jamais la liste des élèves. */
+  b.innerHTML=(note?'<p class="acnote">'+note+'</p>':'')+'<p>Connecte-toi avec le code que ton professeur t\'a donné.'+(locked?' Le site est réservé aux élèves de la classe.':' Tu peux continuer à lire le cours sans te connecter.')+'</p>'
+   +field('acCode','Code de ta classe','text','autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="par exemple : T STI2D 2 b"')
+   +field('acNom','Ton nom de famille','text','autocomplete="family-name" spellcheck="false"')
+   +field('acPw','Ton code personnel','password','autocomplete="current-password"')
+   +'<p class="acsm">Sur un ordinateur du lycée, pense à te déconnecter en partant (bouton « Se déconnecter » en haut de la page).</p>'
+   +'<details class="acsm"><summary>Ce que le site enregistre</summary><p>Ta classe et ton nom, les pages que tu ouvres (date, temps actif, défilement, parties lues, type d\'appareil) et tes signalements. Seul ton professeur les voit, pendant l\'année scolaire. Ton code n\'est jamais gardé dans le navigateur. Détails dans « Tes données sur ce site », après connexion.</p></details>'
+   +'<div class="acrow"><button class="btn pri" type="button" id="acGo">Se connecter</button></div>';
+  var ic=b.querySelector('#acCode'),inn=b.querySelector('#acNom'),ip=b.querySelector('#acPw');
+  try{var last=localStorage.getItem('ac-derniere-classe');if(last){ic.value=last}}catch(e){}
+  (ic.value?inn:ic).focus();
   function go(){
-   var c=canonClass(inp.value.trim());if(!c){msg(b,'Écris le code de ta classe.','err');return}
-   b.querySelector('#acGo').disabled=true;msg(b,'Recherche…');
-   call('roster',{code:c}).then(function(r){
+   var c=canonClass(ic.value.trim()),n=inn.value.trim(),pw=ip.value;
+   if(!c){msg(b,'Écris le code de ta classe.','err');ic.focus();return}
+   if(!n){msg(b,'Écris ton nom de famille.','err');inn.focus();return}
+   if(!pw){msg(b,'Écris ton code personnel.','err');ip.focus();return}
+   b.querySelector('#acGo').disabled=true;msg(b,'Vérification…');
+   call('login',{code:c,nom:n,password:pw}).then(function(r){
     b.querySelector('#acGo').disabled=false;
-    if(!r.ok){msg(b,r.error==='code not found'?'Ce code de classe est introuvable. Vérifie-le.':'La connexion ne fonctionne pas pour le moment. Préviens ton professeur.','err');return}
-    st.code=c;stepName(b,r.eleves);
+    if(r.ok){try{localStorage.setItem('ac-derniere-classe',c)}catch(e){}saveKey(r.key);st={code:r.code,prenom:r.prenom,nom:r.nom};finish(r.jeton,pw,r.changed===false);return}
+    msg(b,r.error==='locked'?'Trop d\'essais incorrects. Attends 15 minutes avant de réessayer.':r.error==='wrong credentials'?'Classe, nom ou code incorrect. Vérifie-les ou demande ton code à ton professeur.':'Connexion impossible. Préviens ton professeur.','err');
    }).catch(function(){b.querySelector('#acGo').disabled=false;msg(b,'Impossible de joindre le serveur. Vérifie ta connexion.','err')});
   }
   b.querySelector('#acGo').addEventListener('click',go);
-  inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
- }
- function stepName(b,eleves){
-  var opts='<option value="" disabled selected>— Choisis ton nom —</option>'+eleves.map(function(e,i){return '<option value="'+i+'">'+esc(e.prenom+' '+e.nom)+'</option>'}).join('');
-  b.innerHTML='<p>Classe : <b>'+esc(st.code)+'</b></p><label class="acl" for="acName">Ton nom</label><select class="acin" id="acName">'+opts+'</select><div class="acrow"><button class="btn" type="button" id="acBack">Retour</button><button class="btn pri" type="button" id="acGo">Continuer</button></div>';
-  b.querySelector('#acName').focus();
-  b.querySelector('#acBack').addEventListener('click',function(){stepCode(b)});
-  b.querySelector('#acGo').addEventListener('click',function(){
-   var v=b.querySelector('#acName').value;
-   if(v===''){msg(b,'Choisis ton nom dans la liste.','err');return}
-   var e=eleves[+v];st.prenom=e.prenom;st.nom=e.nom;
-   stepPass(b); /* plus d'appel « checkAccount » : la vérification du code dit déjà s'il n'y a pas de code enregistré (gain d'environ 2 s) */
-  });
+  [ic,inn,ip].forEach(function(x){x.addEventListener('keydown',function(e){if(e.key==='Enter')go()})});
  }
  function askedKey(s){return 'ac-code-propose-'+s.code+'|'+s.prenom+'|'+s.nom}
- function finish(pw,offer){
-  var s={code:st.code,prenom:st.prenom,nom:st.nom,motDePasse:pw};
+ var memPw=''; /* code tapé à la connexion : gardé en mémoire le temps de proposer d'en choisir un autre, jamais enregistré */
+ function finish(jeton,pw,offer){
+  var s={code:st.code,prenom:st.prenom,nom:st.nom,jeton:jeton};memPw=pw||'';
   save(s);var cb=onDone;onDone=null;close();render();listeners.forEach(function(f){f(s)});if(cb)cb(s);
   var asked=false;try{asked=!!localStorage.getItem(askedKey(s))}catch(e){}
   if(offer&&!asked&&!isGuest(s.code,s.prenom)){try{localStorage.setItem(askedKey(s),'1')}catch(e){}setTimeout(function(){changeCode(true)},150)}
  }
- function stepPass(b){
-  b.innerHTML='<p>Bonjour <b>'+esc(st.prenom)+'</b>. Entre ton mot de passe.</p>'+field('acPw','Mot de passe','password','autocomplete="current-password"')+'<div class="acrow"><button class="btn" type="button" id="acBack">Retour</button><button class="btn pri" type="button" id="acGo">Se connecter</button></div>';
-  var inp=b.querySelector('#acPw');inp.focus();
-  function go(){
-   var pw=inp.value;if(!pw){msg(b,'Écris ton code.','err');return}
-   b.querySelector('#acGo').disabled=true;msg(b,'Vérification…');
-   call('verify',{code:st.code,prenom:st.prenom,nom:st.nom,password:pw}).then(function(r){
-    b.querySelector('#acGo').disabled=false;
-    if(r.ok){saveKey(r.key);finish(pw,r.changed===false);return}
-    msg(b,r.error==='wrong password'?'Code incorrect. Vérifie-le ou demande-le à ton professeur.':r.error==='no password configured for this student'?'Aucun code n\'est enregistré pour ton nom. Demande ton code à ton professeur.':r.error==='locked'?'Trop d\'essais incorrects. Attends 15 minutes avant de réessayer.':'Connexion impossible. Préviens ton professeur.','err');
-   }).catch(function(){b.querySelector('#acGo').disabled=false;msg(b,'Impossible de joindre le serveur.','err')});
-  }
-  b.querySelector('#acGo').addEventListener('click',go);
-  inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
-  b.querySelector('#acBack').addEventListener('click',function(){stepCode(b)});
- }
  function stepChange(b,first){
   var u=load();if(!u||isGuest(u.code,u.prenom)){close();return}
-  b.innerHTML='<p>Bonjour <b>'+esc(u.prenom)+'</b>. '+(first?'C\'est ta première connexion. Tu peux garder le code que ton professeur t\'a donné, ou choisir dès maintenant un code que tu retiendras mieux (4 caractères au moins).':'Tu peux remplacer ton code personnel par un code que tu retiendras mieux (4 caractères au moins).')+' Ton professeur le verra dans sa liste.</p>'+(first?'':field('acOld','Code actuel','password','autocomplete="current-password"'))+field('acP1','Nouveau code','password','autocomplete="new-password"')+field('acP2','Répète le nouveau code','password','autocomplete="new-password"')+'<div class="acrow"><button class="btn" type="button" id="acBack">'+(first?'Garder mon code':'Annuler')+'</button><button class="btn pri" type="button" id="acGo">Enregistrer</button></div>';
-  b.querySelector(first?'#acP1':'#acOld').focus();
+  b.innerHTML='<p>Bonjour <b>'+esc(u.prenom)+'</b>. '+(first?'C\'est ta première connexion. Tu peux garder le code que ton professeur t\'a donné, ou choisir dès maintenant un code que tu retiendras mieux (4 caractères au moins).':'Tu peux remplacer ton code personnel par un code que tu retiendras mieux (4 caractères au moins).')+' Il est protégé : même ton professeur ne pourra pas le lire. Retiens-le bien (en cas d\'oubli, ton professeur t\'en donnera un nouveau).</p>'+((first&&(memPw||u.motDePasse))?'':field('acOld','Code actuel','password','autocomplete="current-password"'))+field('acP1','Nouveau code','password','autocomplete="new-password"')+field('acP2','Répète le nouveau code','password','autocomplete="new-password"')+'<div class="acrow"><button class="btn" type="button" id="acBack">'+(first?'Garder mon code':'Annuler')+'</button><button class="btn pri" type="button" id="acGo">Enregistrer</button></div>';
+  b.querySelector(b.querySelector('#acOld')?'#acOld':'#acP1').focus();
   b.querySelector('#acBack').addEventListener('click',close);
   function go(){
-   var o=first?u.motDePasse:b.querySelector('#acOld').value,a=b.querySelector('#acP1').value,c=b.querySelector('#acP2').value;
+   var o=b.querySelector('#acOld')?b.querySelector('#acOld').value:(memPw||u.motDePasse||''),a=b.querySelector('#acP1').value,c=b.querySelector('#acP2').value;
    if(!o){msg(b,'Écris ton code actuel.','err');return}
    if(a.length<4){msg(b,'Le nouveau code doit faire 4 caractères au moins.','err');return}
    if(a!==c){msg(b,'Les deux nouveaux codes ne sont pas identiques.','err');return}
    if(a===o){msg(b,'Le nouveau code est identique à l\'ancien.','err');return}
    b.querySelector('#acGo').disabled=true;msg(b,'Enregistrement…');
-   call('changePassword',{code:u.code,prenom:u.prenom,nom:u.nom,oldPassword:o,newPassword:a}).then(function(r){
+   call('changePassword',{code:u.code,prenom:u.prenom,nom:u.nom,jeton:u.jeton||'',oldPassword:o,newPassword:a}).then(function(r){
     b.querySelector('#acGo').disabled=false;
-    if(r.ok){u.motDePasse=a;save(u);b.innerHTML='<p><b>C\'est fait.</b> Ton nouveau code est enregistré. Utilise-le à ta prochaine connexion.</p><div class="acrow"><button class="btn pri" type="button" id="acOk">Fermer</button></div>';b.querySelector('#acOk').addEventListener('click',close);b.querySelector('#acOk').focus();return}
+    if(r.ok){if(r.jeton){u.jeton=r.jeton}delete u.motDePasse;memPw='';save(u);b.innerHTML='<p><b>C\'est fait.</b> Ton nouveau code est enregistré. Utilise-le à ta prochaine connexion.</p><div class="acrow"><button class="btn pri" type="button" id="acOk">Fermer</button></div>';b.querySelector('#acOk').addEventListener('click',close);b.querySelector('#acOk').focus();return}
     msg(b,r.error==='wrong password'?'Ton code actuel est incorrect.':r.error==='locked'?'Trop d\'essais incorrects. Attends 15 minutes avant de réessayer.':r.error==='guest'?'Les comptes invités ne peuvent pas changer de code.':'Changement impossible. Préviens ton professeur.','err');
    }).catch(function(){b.querySelector('#acGo').disabled=false;msg(b,'Impossible de joindre le serveur.','err')});
   }

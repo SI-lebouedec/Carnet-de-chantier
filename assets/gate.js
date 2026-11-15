@@ -9,11 +9,18 @@
  var EP="https://script.google.com/macros/s/AKfycbzY6gTw2aiUs01rsS2HYU5SbZfnQCf_W4I2I-n_oxjijwnrjaTSMGQ3_wzhysfZWl8/exec",KEY='ac-carnet-session',VK='ac-carnet-verif',KK='ac-carnet-key';
  if(!EP)return;
  window.__acGate=true;
- function sess(){try{var s=JSON.parse(localStorage.getItem(KEY)||'null');return s&&s.code&&s.prenom&&s.nom&&s.motDePasse?s:null}catch(e){return null}}
+ function sess(){try{var s=JSON.parse(localStorage.getItem(KEY)||'null');return s&&s.code&&s.prenom&&s.nom&&(s.jeton||s.motDePasse)?s:null}catch(e){return null}}
+ function post(o){return fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json()})}
+ /* v8 : la session contient un jeton. Une ancienne session (code gardé dans le navigateur) est convertie une fois en jeton. */
  function verify(s){
-  return fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'verify',code:s.code,prenom:s.prenom,nom:s.nom,password:s.motDePasse})}).then(function(r){return r.json()});
+  if(s.jeton)return post({action:'session',jeton:s.jeton});
+  return post({action:'login',code:s.code,nom:s.prenom,password:s.motDePasse}).then(function(r){
+   if(r&&r.ok&&r.jeton){try{localStorage.setItem(KEY,JSON.stringify({code:r.code,prenom:r.prenom,nom:r.nom,jeton:r.jeton}))}catch(e){}}
+   else if(r&&r.error==='wrong credentials')r.error='wrong password';
+   return r;
+  });
  }
- function badAccount(r){return r&&(r.error==='wrong password'||r.error==='student not found'||r.error==='code not found'||r.error==='no password configured for this student')}
+ function badAccount(r){return r&&(r.error==='wrong password'||r.error==='invalid session'||r.error==='wrong credentials'||r.error==='student not found'||r.error==='code not found'||r.error==='no password configured for this student')}
  function dropSession(){try{localStorage.removeItem(KEY);localStorage.removeItem(VK);localStorage.removeItem(KK)}catch(e){}}
 
  var pl=document.getElementById('acpayload');

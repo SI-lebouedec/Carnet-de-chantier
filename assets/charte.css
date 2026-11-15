@@ -1308,3 +1308,38 @@ html,body{overflow-x:clip}
 
 /* Site dessiné en clair : on empêche le mode sombre automatique du navigateur de le déformer */
 :root{color-scheme:only light}
+
+/* ---- jeu « Formules et unités » ---- */
+.fjeu .fjeq{margin:14px 0 6px;padding:12px 14px;border:2px dashed var(--line);border-radius:6px;background:var(--paper);text-align:center;font-size:1.3rem;line-height:1.9;overflow-x:auto;font-family:'Times New Roman',serif;font-style:italic}
+.fjeu .fjeq.s{font-size:1.05rem;line-height:1.7;margin:6px 0;padding:6px 10px}
+.fjeu .fjv{font-style:italic}
+.fjeu .fjb{display:inline-block;min-width:1.5em;padding:0 .3em;margin:0 .1em;border:2.5px solid var(--theme-2);border-radius:5px;background:var(--theme-wash);color:var(--theme-ink);font-style:normal;font-weight:700;text-align:center}
+.fjeu .qcm .q .fjb{font-size:.95em}
+.fjeu .fju{font-family:var(--f-label,inherit);font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.fjeu .opt{font-size:1.02rem}
+.fjeu .opt .frac,.fjeu .q .frac{font-size:1.05em}
+.fjeu .fjmiss{list-style:none;margin:6px 0 14px;padding:0;display:grid;gap:10px}
+.fjeu .fjmiss li{border:1.5px solid var(--line);border-left:5px solid var(--bad);border-radius:5px;padding:8px 12px;background:var(--panel);min-width:0}
+.fjeu .fjmt{display:block;font-weight:700;font-size:.92rem;margin-bottom:2px}
+.fjeu .blk .btn{margin:4px 6px 4px 0}
+@media(max-width:700px){.fjeu .fjeq{font-size:1.1rem;text-align:left}}
+
+/* Téléphone : une formule avec fraction tient sur UNE ligne, et la lettre à gauche est alignée sur la barre de fraction */
+@media(max-width:760px){
+ .an-eq:has(.frac){display:flex;flex-wrap:nowrap;align-items:center;justify-content:safe center;gap:.25em;white-space:nowrap;overflow-x:auto;overflow-y:hidden;font-size:clamp(1.15rem,6.2vw,1.7rem);line-height:1.3}
+ .an-eq:has(.frac)>*{flex:0 0 auto}
+}
+@media(max-width:760px){
+ .fm-c .eq{font-size:clamp(1.25rem,6.4vw,1.9rem);max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+}
+#airw .ai-bil{margin-top:10px;padding:10px 12px;border-left:5px solid var(--theme-2);background:var(--theme-wash);border-radius:4px;font-size:.95rem;line-height:1.55}
+/* Niveaux de titres corrigés (audit vague 2) : mêmes styles qu'avant */
+.phase-card h3{font-size:1.05rem;margin:4px 0 8px;font-weight:600}
+.entry h2{font-family:var(--f-title);font-size:2.2rem;line-height:1.1;margin:0 0 6px;font-weight:700}
+.rm-two h3{margin:0 0 4px;font-family:var(--f-title);font-size:1.3rem}
+.vb h2{font-family:var(--f-title);font-size:2.4rem;line-height:1;margin:0;font-weight:700}
+body.ft-mix .entry h2,body.ft-mix .vb h2{font-family:var(--f-title);text-transform:none;letter-spacing:normal}
+body.ft-mix .entry h2{font-size:2.2rem}body.ft-mix .vb h2{font-size:2.4rem}
+/* Étiquette des blocs : dans le flux, pour qu'une étiquette sur 2 ou 3 lignes (téléphone) repousse le texte au lieu de le recouvrir */
+body.bl-lavis .blk>.lb{position:relative;top:auto;left:auto;display:table;max-width:100%;margin:-41px 0 6px -2px}
+body.bl-etiq .blk>.lb{position:relative;top:auto;left:auto;display:table;max-width:100%;margin:-39px 0 8px -8px}

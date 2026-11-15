@@ -288,7 +288,7 @@
   panel=document.createElement('aside');panel.id='calcPanel';panel.className='calcpanel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Calculatrice');panel.hidden=true;
   panel.innerHTML='<div class="chead"><b>Calculatrice</b><button type="button" class="cmode" id="cMode" aria-label="Unité des angles">DEG</button><button type="button" class="cx" id="cX" aria-label="Fermer la calculatrice">×</button></div>'
    +'<div class="ctr"><div class="ctrh"><span>Trace des calculs</span><button type="button" id="cClr">Effacer la trace</button></div><ol id="cTrace" aria-label="Trace des calculs"></ol></div>'
-   +'<div class="cdisp"><input id="cIn" class="cin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Calcul à effectuer" placeholder="ex. 2,4 ÷ tan(68)"><div id="cView" class="cview" aria-hidden="true" hidden></div><output id="cOut" class="cout" aria-live="polite"></output></div>'
+   +'<div class="cdisp"><input id="cIn" class="cin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Calcul à effectuer"><div id="cView" class="cview" aria-hidden="true" hidden></div><output id="cOut" class="cout" aria-live="polite"></output></div>'
    +'<div class="ckeys" id="cKeys"></div>'
    +'<p class="chelp">2π ou 3(4+1) comptent comme un seul facteur. Angles : <span id="cModeTxt">degrés</span>.</p>';
   document.body.appendChild(panel);

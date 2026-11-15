@@ -38,3 +38,12 @@ body.mo-full .sec.rv>*,body.mo-full .pn{transform:translateY(18px) scale(1);tran
 body.mo-full .sec.rv.vu>*,body.mo-full .pn.vu{transform:none}
 body.cf-calme .sec.rv>*,body.cf-calme .pn{opacity:1!important;transform:none!important}
 .eqt[aria-pressed=true],.vtools button.on{color:var(--on-theme)}
+
+/* Cibles tactiles (audit vague 2) : au moins 24 px de haut sans changer la mise en page */
+input[type=range]{min-height:32px}
+.ph-credit a{display:inline-block;padding:6px 0;margin:-6px 0}
+.sub-chip{background:rgba(20,12,4,.58)}
+.gtable td.gl-s a,.bc .bs a{min-height:26px}
+.fig.photo .cr a,.phc .cr a,figcaption a,.bdocs a{display:inline-block;padding:5px 0;margin:-5px 0}
+.calc .ctl label.chk input[type=checkbox],input[type=checkbox],input[type=radio]{min-width:22px;min-height:22px}
+.sub-chip{background:#4a3a28}

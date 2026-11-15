@@ -83,7 +83,7 @@
    if(!type){M.msg(b,'Choisis le type de problème.','err');return}
    if(saw.length<5){M.msg(b,'Décris ce que tu as vu (quelques mots suffisent).','err');return}
    var tl=TYPES.filter(function(t){return t[0]===type})[0][1];
-   var p={fiche:'Signalement',dateHeure:new Date().toLocaleString('fr-FR'),code:s.code,prenom:s.prenom,nom:s.nom,motDePasse:s.motDePasse||'',
+   var p={fiche:'Signalement',dateHeure:new Date().toLocaleString('fr-FR'),code:s.code,prenom:s.prenom,nom:s.nom,jeton:s.jeton||undefined,motDePasse:s.jeton?undefined:(s.motDePasse||''),
     statut:'Nouveau',traitement:'',type:tl,page:pg,adresse:location.pathname.split('/').pop()+location.hash,section:sec,lieu:b.querySelector('#sgWhere').value.trim(),
     attendu:b.querySelector('#sgExp').value.trim(),vu:saw,reponseSaisie:b.querySelector('#sgVal').value.trim(),reponsesPage:answers(),
     ecran:innerWidth+'x'+innerHeight+' (écran '+screen.width+'x'+screen.height+')',navigateur:(navigator.userAgent||'').slice(0,140)};
@@ -101,8 +101,8 @@
    clearTimeout(t);
    if(r&&r.ok){done(b,'Merci, ton signalement est envoyé. Ton professeur le lira.');return}
    btn.disabled=false;
-   if(r&&r.error==='invalid credentials'){AC.logout();M.msg(b,'Ta session n\'est plus valide : ferme cette fenêtre, reconnecte-toi, puis recommence.','err');return}
-   M.msg(b,'L\'envoi a échoué ('+((r&&r.error)||'erreur inconnue')+'). Réessaie dans un moment.','err');
+   if(r&&(r.error==='invalid credentials'||r.error==='invalid session')){AC.logout();M.msg(b,'Ta session n\'est plus valide : ferme cette fenêtre, reconnecte-toi, puis recommence.','err');return}
+   M.msg(b,r&&r.error==='too many'?'Tu as déjà envoyé plusieurs signalements cette heure-ci. Merci ! Réessaie plus tard si besoin.':'L\'envoi a échoué ('+((r&&r.error)||'erreur inconnue')+'). Réessaie dans un moment.','err');
   }).catch(function(){
    clearTimeout(t);btn.disabled=false;
    M.msg(b,'Je n\'ai pas pu confirmer la réception. Ton message est peut-être arrivé : vérifie ta connexion, puis réessaie si tu veux.','err');

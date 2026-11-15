@@ -5,13 +5,14 @@
  var EP="https://script.google.com/macros/s/AKfycbzY6gTw2aiUs01rsS2HYU5SbZfnQCf_W4I2I-n_oxjijwnrjaTSMGQ3_wzhysfZWl8/exec",KEY='ac-carnet-session';
  if(!EP)return;
  var P={'index':'Accueil','glossaire':'Glossaire','verbes':'Verbes de consigne','remediation':'Remédiation','remediation-regle-de-trois':'Remédiation — Règle de trois','remediation-graphique':'Remédiation — Graphiques','remediation-correlation':'Remédiation — Corrélation','remediation-reciproques':'Remédiation — Opérations réciproques','alphabet-grec':'Alphabet grec','fiche-metiers':'Fiche métiers','sujets-de-bac':'Sujets de bac','carnet-de-revision':'Carnet de révision',
-  'sequence-0':'Séquence 0 — Rappels','sequence-1':'Séquence 1 — Bioclimatisme','sequence-2':'Séquence 2 — Efficacité énergétique','sequence-3':'Séquence 3 — Dimensionner une structure','sequence-4':'Séquence 4 — Concevoir un logement agréable','sequence-5':'Séquence 5 — Organisation de chantier','sequence-6':'Séquence 6 — Topographie','sequence-7':'Séquence 7 — Un ouvrage à l\'épreuve du temps','sequence-8':'Séquence 8 — RDM : flexion','sequence-9':'Séquence 9 — Optimisation de l\'enveloppe',
+  'donnees':'Tes données sur ce site','sequence-0':'Séquence 0 — Rappels','sequence-1':'Séquence 1 — Bioclimatisme','sequence-2':'Séquence 2 — Efficacité énergétique','sequence-3':'Séquence 3 — Dimensionner une structure','sequence-4':'Séquence 4 — Concevoir un logement agréable','sequence-5':'Séquence 5 — Organisation de chantier','sequence-6':'Séquence 6 — Topographie','sequence-7':'Séquence 7 — Un ouvrage à l\'épreuve du temps','sequence-8':'Séquence 8 — RDM : flexion','sequence-9':'Séquence 9 — Optimisation de l\'enveloppe',
   'bac-2021-metropole':'Bac 2021 — Métropole','bac-2022-boiseo':'Bac 2022 — Boiséo','bac-2022-nc':'Bac 2022 — Nouvelle-Calédonie','bac-2023-la-reunion':'Bac 2023 — La Réunion','bac-2023-velodrome':'Bac 2023 — Vélodrome','bac-2024-metropole-remplacement':'Bac 2024 — Métropole (remplacement)','bac-2024-polynesie':'Bac 2024 — Polynésie','bac-2024-teleo':'Bac 2024 — Téléo','bac-2025-metropole':'Bac 2025 — Métropole','bac-2026-antilles-guyane':'Bac 2026 — Antilles-Guyane'};
  var file=(location.pathname.split('/').pop()||'index.html').replace(/\.html$/,'')||'index';
  var page=P[file]||(document.title||file).replace(/\s*[·—-]\s*(Carnet de chantier AC|Réponse en ligne).*$/,'').slice(0,80);
  function norm(x){return String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[\s\-_.]+/g,'').toLowerCase()}
  var s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
- if(!s||!s.code||!s.prenom||!s.nom||!s.motDePasse)return;
+ if(!s||!s.code||!s.prenom||!s.nom||!(s.jeton||s.motDePasse))return;
+ function cur(){try{var x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&x.jeton)return x}catch(e){}return s} /* v8 : jeton (une ancienne session est convertie par gate.js) */
  var vid=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
  var dev=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||innerWidth<700?'mobile':'ordinateur';
  var active=0,lastSent=-1,lastInput=Date.now(),maxScroll=0,secs={};
@@ -23,7 +24,7 @@
  function send(){
   if(stopped)return;
   lastSent=active;
-  var body=JSON.stringify({fiche:'Suivi consultation AC',code:s.code,prenom:s.prenom,nom:s.nom,motDePasse:s.motDePasse,page:page,tempsPasseSecondes:active,defilementMax:maxScroll,sections:sections(),visitId:vid,appareil:dev});
+  var u=cur();var body=JSON.stringify({fiche:'Suivi consultation AC',code:u.code,prenom:u.prenom,nom:u.nom,jeton:u.jeton||undefined,motDePasse:u.jeton?undefined:u.motDePasse,page:page,tempsPasseSecondes:active,defilementMax:maxScroll,sections:sections(),visitId:vid,appareil:dev});
   try{fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:body}).then(function(r){return r.json()}).then(function(j){if(j&&j.ok===false&&(j.error==='invalid credentials'||j.error==='locked'))stopped=true}).catch(function(){})}catch(e){try{navigator.sendBeacon(EP,body)}catch(e2){}}
  }
  setInterval(function(){
