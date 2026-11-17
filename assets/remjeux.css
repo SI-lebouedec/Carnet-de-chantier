@@ -113,14 +113,6 @@
 .cards-rep details p{margin:6px 0 2px}
 .ca-p{color:var(--ink2)}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-/* cibles façon biathlon */
-.biath{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px;align-items:center}
-.biath .tg{width:26px;height:26px;border-radius:50%;border:3px solid var(--ink);background:#fff;position:relative;box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 7px var(--line)}
-.biath .tg.cur{box-shadow:0 0 0 3px color-mix(in srgb,var(--theme) 55%,transparent),inset 0 0 0 4px #fff,inset 0 0 0 7px var(--line)}
-.biath .tg.hit{background:var(--ink);box-shadow:inset 0 0 0 4px var(--ok)}
-.biath .tg.miss{background:#fff;border-color:var(--bad);box-shadow:none}
-.biath .tg.miss::before,.biath .tg.miss::after{content:'';position:absolute;left:50%;top:50%;width:16px;height:3px;background:var(--bad);border-radius:2px;transform:translate(-50%,-50%) rotate(45deg)}
-.biath .tg.miss::after{transform:translate(-50%,-50%) rotate(-45deg)}
 /* lettres grecques : les polices manuscrites n'en ont pas, on retombe sur Carlito */
 .case .cq,.jeu .cq{font-family:'Caveat','Carlito','Calibri','Segoe UI',sans-serif}
 /* racine carrée : la barre couvre tout le bloc sans traverser les chiffres */

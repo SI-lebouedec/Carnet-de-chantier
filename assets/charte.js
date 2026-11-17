@@ -611,3 +611,39 @@ if(location.hash){/* aller à l'ancre, puis recaler après la mise en page (figu
  addEventListener('load',function(){scan();setTimeout(scan,1200)});addEventListener('resize',later);addEventListener('orientationchange',later);
  document.addEventListener('DOMContentLoaded',function(){setTimeout(scan,300)});
 })();
+
+/* ---------- cibles façon biathlon : suivi des bonnes et mauvaises réponses d'une série (règle du 17/11/2026) ----------
+   Une cible par question : noire si juste du premier coup, croix rouge si faux, entourée = question en cours,
+   croix rouge cerclée de vert = fausse au premier essai puis corrigée. Utilisé partout où il y a une série de questions. */
+window.Biath=function(n,o){
+ o=o||{};
+ const el=document.createElement('div');el.className='biath'+(o.cls?' '+o.cls:'');el.setAttribute('role','img');
+ el.innerHTML=(o.label?'<span class="biath-l">'+o.label+'</span>':'')+Array.from({length:n},(_,i)=>'<span class="tg" data-i="'+i+'"></span>').join('');
+ const T=()=>[...el.querySelectorAll('.tg')];
+ const lab=()=>{const t=T();el.setAttribute('aria-label',(o.label?o.label+' : ':'')+t.filter(x=>x.classList.contains('hit')).length+' juste(s), '+t.filter(x=>x.classList.contains('miss')).length+' fausse(s) sur '+n)};
+ el.set=(i,ok)=>{const t=T()[i];if(!t)return;t.classList.remove('cur');if(t.classList.contains('hit')||t.classList.contains('miss')){if(ok&&t.classList.contains('miss'))t.classList.add('fix');}else t.classList.add(ok?'hit':'miss');lab()};
+ el.cur=i=>{T().forEach((t,k)=>t.classList.toggle('cur',k===i))};
+ el.reset=()=>{T().forEach(t=>t.className='tg');lab()};lab();
+ return el;
+};
+/* séries de questions sans compteur : les questions à choix d'une même partie (.case avec data-ok) */
+(function(){
+ document.querySelectorAll('.sec').forEach(sec=>{
+  const cs=[...sec.querySelectorAll('.case')].filter(c=>c.querySelector('.opt[data-ok]'));
+  if(cs.length<2)return;
+  const b=Biath(cs.length,{label:'Mes réponses'});cs[0].before(b);
+  cs.forEach((c,k)=>c.addEventListener('click',e=>{const o=e.target.closest('.opt[data-ok]');if(!o||o.disabled||c.dataset.bi)return;c.dataset.bi='1';b.set(k,o.dataset.ok==='1')},true));
+ });
+})();
+/* sujets de bac et pages à réponses vérifiées : une cible par bloc de correction (id « …-feedback ») */
+(function(){
+ const fbs=[...document.querySelectorAll('[id$="-feedback"]')];if(fbs.length<2)return;
+ const b=Biath(fbs.length,{label:'Mes réponses vérifiées',cls:'biath-bac'});
+ const h=document.querySelector('main h2')||fbs[0];h.before(b);
+ const st=fbs.map(()=>null);
+ fbs.forEach((f,k)=>{
+  const t=b.querySelectorAll('.tg')[k];t.setAttribute('title','Question '+(k+1));t.tabIndex=0;
+  t.onclick=()=>{const q=f.closest('.card,.qblock,section')||f;q.scrollIntoView({behavior:'smooth',block:'start'})};
+  new MutationObserver(()=>{const c=f.classList;if(!c.contains('ok')&&!c.contains('ko'))return;const ok=c.contains('ok');if(st[k]===ok)return;st[k]=ok;b.set(k,ok)}).observe(f,{attributes:true,attributeFilter:['class']});
+ });
+})();

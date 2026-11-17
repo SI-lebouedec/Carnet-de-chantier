@@ -1343,3 +1343,18 @@ body.ft-mix .entry h2{font-size:2.2rem}body.ft-mix .vb h2{font-size:2.4rem}
 /* Étiquette des blocs : dans le flux, pour qu'une étiquette sur 2 ou 3 lignes (téléphone) repousse le texte au lieu de le recouvrir */
 body.bl-lavis .blk>.lb{position:relative;top:auto;left:auto;display:table;max-width:100%;margin:-41px 0 6px -2px}
 body.bl-etiq .blk>.lb{position:relative;top:auto;left:auto;display:table;max-width:100%;margin:-39px 0 8px -8px}
+
+/* ---------- cibles façon biathlon (règle du 17/11/2026) : toute série de questions affiche ses résultats ainsi ----------
+   noire = juste du premier coup ; croix rouge = faux ; entourée = question en cours ; croix + anneau vert = corrigée ensuite */
+.biath{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px;align-items:center}
+.biath-l{font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-weight:600;font-size:.85rem;color:var(--ink2);margin-right:4px}
+.biath .tg,.qzbar i,.vfscore i{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:3px solid var(--ink);background:#fff;position:relative;box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 6px var(--line);display:inline-block}
+.qzbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.biath .tg.cur,.qzbar i.c{box-shadow:0 0 0 3px color-mix(in srgb,var(--theme) 60%,transparent),inset 0 0 0 3px #fff,inset 0 0 0 6px var(--line)}
+.biath .tg.hit,.qzbar i.g,.vfscore i.g{background:var(--ink);border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--ok)}
+.biath .tg.miss,.qzbar i.b,.vfscore i.b{background:#fff;border-color:var(--bad);box-shadow:none}
+.biath .tg.miss::before,.biath .tg.miss::after,.qzbar i.b::before,.qzbar i.b::after,.vfscore i.b::before,.vfscore i.b::after{content:'';position:absolute;left:50%;top:50%;width:15px;height:3px;background:var(--bad);border-radius:2px;transform:translate(-50%,-50%) rotate(45deg)}
+.biath .tg.miss::after,.qzbar i.b::after,.vfscore i.b::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.biath .tg.miss.fix{box-shadow:0 0 0 3px var(--ok)}
+.biath-bac{position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:5;background:var(--paper);padding:6px 10px;border:2px solid var(--line);border-radius:12px}
+.biath-bac .tg{cursor:pointer}
