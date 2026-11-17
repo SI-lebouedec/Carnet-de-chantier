@@ -441,7 +441,7 @@ $('scrim').addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 addEventListener('resize',()=>{if(innerWidth>1180)closeNav()});
 
 
-/* démarche étape par étape : le deuxième exemple d'une fiche (et les exercices) ne s'affichent pas d'emblée.
+/* démarche étape par étape : à partir du deuxième exemple d'une partie (et pour les exercices), la résolution ne s'affiche pas d'emblée.
    L'élève fait le calcul, puis vérifie : chaque clic dévoile une étape de la méthode en 5 étapes. */
 (function(){
  function stepify(box,st,shown,todo){
@@ -470,16 +470,16 @@ addEventListener('resize',()=>{if(innerWidth>1180)closeNav()});
   rs.onclick=()=>{n=Math.min(shown,steps.length);draw();box.scrollIntoView({block:'nearest'})};
   draw();
  }
+ /* Règle (17/11/2026, demande de Robin) : dans chaque partie, seul le PREMIER exemple résolu est affiché en entier.
+    Les suivants deviennent « À toi de jouer » : l'énoncé et les données restent visibles, la résolution se dévoile
+    étape par étape. Les exercices (.exo) gardent leur fonctionnement. */
  document.querySelectorAll('.sec').forEach(sec=>{
-  let seen=false;
-  const norm=e=>e?e.textContent.replace(/\s+/g,' ').trim():'';
-  const reds=[...sec.querySelectorAll('.fm-r .steps')].map(norm);
-  sec.querySelectorAll('.fm-r, .blk.exemple').forEach(el=>{
-   if(el.classList.contains('fm-r')){seen=true;return}
-   /* le premier exemple d'une formule (même calcul que sa fiche « rédaction ») reste affiché */
-   if(!el.classList.contains('exo')&&reds.indexOf(norm(el.querySelector('.steps')))>=0)return;
+  let shown=0;
+  sec.querySelectorAll('.blk.exemple').forEach(el=>{
    if(el.classList.contains('exo')){const d=el.querySelector('details.exo-d');if(!d)return;const st=d.querySelector('.steps');d.replaceWith(st);stepify(el,st,0,false);return}
-   if((seen||el.classList.contains('todo'))&&!el.classList.contains('keep'))stepify(el,el.querySelector('.steps'),0,true);
+   if(el.classList.contains('todo')){stepify(el,el.querySelector('.steps'),0,true);return}
+   if(shown===0){shown++;return}
+   stepify(el,el.querySelector('.steps'),0,true);
   });
  });
 })();
