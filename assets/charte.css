@@ -869,7 +869,7 @@ h3.tcap{font-family:var(--f-label);letter-spacing:.1em;text-transform:uppercase;
 .eqs{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:8px}
 .es{background:var(--panel);border:2px solid var(--line);border-left:6px solid var(--theme);border-radius:4px 10px 10px 4px;padding:6px 12px}
 .es small{display:block;font-family:var(--f-label);letter-spacing:.1em;text-transform:uppercase;font-size:.78rem;color:var(--theme-ink);font-weight:600}
-.eqx.js .es.hid{display:none}
+.eqx.js .es.hid,#eqx.js .es.hid{display:none}
 .eq-nt{margin:6px 0 0;font-size:.9rem;color:var(--ink2)}
 .eqc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .es .ln,.eqh .ln{font-family:'Times New Roman',serif;font-size:1.2rem}
