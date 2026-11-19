@@ -20,9 +20,11 @@
   return fetch(EP+'?action='+action+'&'+q).then(function(r){return r.json()});
  }
  function saveKey(k){try{if(k)localStorage.setItem(KK,k)}catch(e){}}
- function norm(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\-_.]+/g,'').toLowerCase()}
+ function norm(x){return String(x||'').toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'')}
  /* Tolère majuscules, accents et espaces dans le code de classe : on retrouve l'écriture exacte de la liste SITE.classes */
- function canonClass(c){if(norm(c)==='invites')return 'STI2D';var L=(window.SITE&&window.SITE.classes)||[];for(var i=0;i<L.length;i++){if(norm(L[i])===norm(c))return L[i]}return c}
+ /* « T STI2D 1 a », « tsti2d1A », « Terminale STI2D 1A », « 1a » : même classe (clé « 1a ») */
+ function classKey(x){return norm(x).replace(/^terminale/,'t').replace(/^t(?=sti2d|\d)/,'').replace(/sti2d/,'')}
+ function canonClass(c){var n=norm(c);if(n==='invites'||n==='invite')return 'STI2D';var L=(window.SITE&&window.SITE.classes)||[],i;for(i=0;i<L.length;i++){if(norm(L[i])===n)return L[i]}var k=classKey(c);if(k){for(i=0;i<L.length;i++){if(classKey(L[i])===k)return L[i]}}return c}
  function isGuest(code,prenom){var c=norm(code);return c==='invites'||c==='sti2d'||norm(prenom)==='invite'}
  var css=document.createElement('link');css.rel='stylesheet';css.href='assets/suivi.css';document.head.appendChild(css);
 
@@ -53,7 +55,7 @@
    +field('acNom','Ton nom de famille','text','autocomplete="family-name" spellcheck="false"')
    +field('acPw','Ton code personnel','password','autocomplete="current-password"')
    +'<p class="acsm">Sur un ordinateur du lycée, pense à te déconnecter en partant (bouton « Se déconnecter » en haut de la page).</p>'
-   +'<details class="acsm"><summary>Ce que le site enregistre</summary><p>Ta classe et ton nom, les pages que tu ouvres (date, temps actif, défilement, parties lues, type d\'appareil) et tes signalements. Seul ton professeur les voit, pendant l\'année scolaire. Ton code n\'est jamais gardé dans le navigateur. Détails dans « Tes données sur ce site », après connexion.</p></details>'
+   +'<details class="acsm"><summary>Ce que le site enregistre</summary><p>Ta classe et ton nom, les pages que tu ouvres (date, temps actif, défilement, parties lues, type d\'appareil), tes résultats aux QCM et séries de questions, et tes signalements. Seul ton professeur les voit, pendant l\'année scolaire. Ton code n\'est jamais gardé dans le navigateur. Détails dans « Tes données sur ce site », après connexion.</p></details>'
    +'<div class="acrow"><button class="btn pri" type="button" id="acGo">Se connecter</button></div>';
   var ic=b.querySelector('#acCode'),inn=b.querySelector('#acNom'),ip=b.querySelector('#acPw');
   try{var last=localStorage.getItem('ac-derniere-classe');if(last){ic.value=last}}catch(e){}

@@ -615,15 +615,27 @@ if(location.hash){/* aller à l'ancre, puis recaler après la mise en page (figu
 /* ---------- cibles façon biathlon : suivi des bonnes et mauvaises réponses d'une série (règle du 17/11/2026) ----------
    Une cible par question : noire si juste du premier coup, croix rouge si faux, entourée = question en cours,
    croix rouge cerclée de vert = fausse au premier essai puis corrigée. Utilisé partout où il y a une série de questions. */
+/* Nom lisible d'une série pour le suivi : titre (h2/h3) qui la précède dans la page, + étiquette si elle n'est pas générique */
+window.ACserie=function(el,label){
+ let h=null;document.querySelectorAll('h1,h2,h3').forEach(x=>{if(x.compareDocumentPosition(el)&4)h=x});
+ let t=h?(h.textContent||'').replace(/\s+/g,' ').trim():'';
+ if(label&&!/^Mes (réponses|réponses vérifiées)$/.test(label))t+=(t?' · ':'')+label.replace(/^Mes /,'');
+ return (t||'Série').slice(0,110);
+};
 window.Biath=function(n,o){
  o=o||{};
  const el=document.createElement('div');el.className='biath'+(o.cls?' '+o.cls:'');el.setAttribute('role','img');
  el.innerHTML=(o.label?'<span class="biath-l">'+o.label+'</span>':'')+Array.from({length:n},(_,i)=>'<span class="tg" data-i="'+i+'"></span>').join('');
  const T=()=>[...el.querySelectorAll('.tg')];
  const lab=()=>{const t=T();el.setAttribute('aria-label',(o.label?o.label+' : ':'')+t.filter(x=>x.classList.contains('hit')).length+' juste(s), '+t.filter(x=>x.classList.contains('miss')).length+' fausse(s) sur '+n)};
- el.set=(i,ok)=>{const t=T()[i];if(!t)return;t.classList.remove('cur');if(t.classList.contains('hit')||t.classList.contains('miss')){if(ok&&t.classList.contains('miss'))t.classList.add('fix');}else t.classList.add(ok?'hit':'miss');lab()};
+ /* série terminée (toutes les cibles ont leur premier verdict) : résultat envoyé au suivi du professeur (version en ligne, élève connecté) */
+ let sent=false;
+ const report=()=>{if(sent)return;const t=T();if(t.some(x=>!x.classList.contains('hit')&&!x.classList.contains('miss')))return;sent=true;
+  if(!window.ACresult)return;const ok=t.filter(x=>x.classList.contains('hit')).length;
+  try{ACresult({activite:o.type||'Série',serie:o.name||ACserie(el,o.label),cle:o.cle,score:ok,total:n,cibles:t.map(x=>x.classList.contains('hit')?'●':'○').join(''),ratees:o.ratees?o.ratees():[]})}catch(e){}};
+ el.set=(i,ok)=>{const t=T()[i];if(!t)return;t.classList.remove('cur');if(t.classList.contains('hit')||t.classList.contains('miss')){if(ok&&t.classList.contains('miss'))t.classList.add('fix');}else t.classList.add(ok?'hit':'miss');lab();setTimeout(report,0)};
  el.cur=i=>{T().forEach((t,k)=>t.classList.toggle('cur',k===i))};
- el.reset=()=>{T().forEach(t=>t.className='tg');lab()};lab();
+ el.reset=()=>{T().forEach(t=>t.className='tg');sent=false;lab()};lab();
  return el;
 };
 /* séries de questions sans compteur : les questions à choix d'une même partie (.case avec data-ok) */
@@ -638,7 +650,7 @@ window.Biath=function(n,o){
 /* sujets de bac et pages à réponses vérifiées : une cible par bloc de correction (id « …-feedback ») */
 (function(){
  const fbs=[...document.querySelectorAll('[id$="-feedback"]')];if(fbs.length<2)return;
- const b=Biath(fbs.length,{label:'Mes réponses vérifiées',cls:'biath-bac'});
+ const b=Biath(fbs.length,{label:'Mes réponses vérifiées',cls:'biath-bac',type:'Sujet de bac',name:'Réponses vérifiées du sujet'});
  const h=document.querySelector('main h2')||fbs[0];h.before(b);
  const st=fbs.map(()=>null);
  fbs.forEach((f,k)=>{

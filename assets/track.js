@@ -27,6 +27,16 @@
   var u=cur();var body=JSON.stringify({fiche:'Suivi consultation AC',code:u.code,prenom:u.prenom,nom:u.nom,jeton:u.jeton||undefined,motDePasse:u.jeton?undefined:u.motDePasse,page:page,tempsPasseSecondes:active,defilementMax:maxScroll,sections:sections(),visitId:vid,appareil:dev});
   try{fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:body}).then(function(r){return r.json()}).then(function(j){if(j&&j.ok===false&&(j.error==='invalid credentials'||j.error==='locked'))stopped=true}).catch(function(){})}catch(e){try{navigator.sendBeacon(EP,body)}catch(e2){}}
  }
+ /* Résultats des séries de questions (QCM, vrai ou faux, jeux, remédiation, sujets de bac) → onglet « Quiz – Résultats ».
+    Appelé par quiz.js, vraifaux.js, formjeu.js et les cibles « biathlon » (charte.js) à la fin d'une série. */
+ window.ACresult=function(r){
+  if(stopped||!r)return;var u=cur();if(!u||!u.jeton)return;
+  var tot=Math.max(0,Math.min(500,+r.total||0));if(!tot)return;
+  var body=JSON.stringify({fiche:'Quiz – Résultats',jeton:u.jeton,page:page,fichier:file,activite:String(r.activite||'Série').slice(0,40),serie:String(r.serie||'Série').slice(0,120),
+   cle:String(r.cle||(file+'|'+(r.serie||''))).slice(0,140),score:Math.max(0,Math.min(tot,+r.score||0)),total:tot,cibles:String(r.cibles||'').slice(0,200),
+   ratees:(r.ratees||[]).map(function(x){return String(x).replace(/\s*\|\s*/g,' / ')}).join(' | ').slice(0,1800),essai:+r.essai||'',appareil:dev,visitId:vid});
+  try{fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:body}).catch(function(){})}catch(e){try{navigator.sendBeacon(EP,body)}catch(e2){}}
+ };
  setInterval(function(){
   var h=document.documentElement,sc=Math.round(((window.pageYOffset||h.scrollTop)+innerHeight)/Math.max(h.scrollHeight,1)*100);if(sc>maxScroll)maxScroll=Math.min(sc,100);
   if(document.visibilityState==='visible'&&Date.now()-lastInput<60000){
